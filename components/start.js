@@ -1,5 +1,6 @@
 import {useState} from "react";
 import { TextInput, ImageBackground, TouchableOpacity, View, Text, StyleSheet } from "react-native";
+import { Platform, KeyboardAvoidingView } from "react-native";
 
 const Start = ({ navigation })=>{
     const [name, setName] = useState("");
@@ -30,6 +31,9 @@ const Start = ({ navigation })=>{
                 {/* color 1 */}
                 <TouchableOpacity 
                 style={[styles.selectStyleColor, styles.selectColor1]}
+                accessible={true}
+                accessibilityLabel="color-black" 
+                accessibilityRole="button"
                 onPress={()=> setBackground(styles.selectColor1.backgroundColor)}
                 >
                 </TouchableOpacity>
@@ -37,29 +41,43 @@ const Start = ({ navigation })=>{
                 <TouchableOpacity 
                 style={[styles.selectStyleColor, styles.selectColor2]}
                 onPress={()=> setBackground(styles.selectColor2.backgroundColor)}
+                accessible={true}
+                accessibilityLabel="color-dark violet" 
+                accessibilityRole="button"
                 >
                 </TouchableOpacity>
                 {/* color 3 */}
                 <TouchableOpacity
                 style={[styles.selectStyleColor, styles.selectColor3]} 
                 onPress={()=> setBackground(styles.selectColor3.backgroundColor)}
+                accessible={true}
+                accessibilityLabel="color-light blue" 
+                accessibilityRole="button"
                 >
                 </TouchableOpacity>
                 {/* color 4 */}
                 <TouchableOpacity
                 style={[styles.selectStyleColor, styles.selectColor4]} 
                 onPress={()=> setBackground(styles.selectColor4.backgroundColor)}
+                accessible={true}
+                accessibilityLabel="color-light green" 
+                accessibilityRole="button"
                 >
                 </TouchableOpacity>
             </View>
             </View>
             {/* button to go chat screen */}
             <TouchableOpacity 
-            style={styles.buttonStart}
-                onPress={() => navigation.navigate('Chat', {name: name, background: background})} >
+                style={styles.buttonStart}
+                onPress={() => navigation.navigate('Chat', {name: name, background: background})}
+                accessible={true}
+                accessibilityLabel="Get start chatting"
+                accessibilityHint="Navigates to the chat screen." 
+                accessibilityRole="button">
                 <Text style={styles.buttonText}>Start Chatting</Text>
             </TouchableOpacity>
         </View>
+        {Platform.OS === 'ios' ? <KeyboardAvoidingView behavior = "padding" /> : null}
         </ImageBackground>
         
     )
@@ -76,7 +94,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-around'
     },
     appTitle:{
-        fontSize: 35,
+        fontSize: 25,
         fontWeight: 600,
         color: "#FFFFFF"
     },
