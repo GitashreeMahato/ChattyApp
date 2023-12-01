@@ -1,5 +1,5 @@
 import { useState,useEffect } from "react";
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { GiftedChat, Bubble } from "react-native-gifted-chat";
 import { KeyboardAvoidingView, Platform } from "react-native";
  
@@ -26,21 +26,13 @@ const Chat = ({ route, navigation }) => {
         }}
         wrapperStyle={{
             right: {
-                backgroundColor: "blue",
-                borderRadius: 15,
-                // backgroundColor: Color.defaultBlue,
-                marginLeft: 60,
-                minHeight: 20,
-                justifyContent: 'flex-end',
+                backgroundColor: "#0000FF",
             },
             left: {
                 backgroundColor: "#414045",
                 left: -20
                 
             },
-            // wrapper: {
-                
-            //   },
         }}
         />
         
@@ -77,7 +69,7 @@ const Chat = ({ route, navigation }) => {
 
     
   
-    
+    // render main chat UI 
     return(
         <View style={[styles.container, {backgroundColor: background}] }>
             {/* <Text style={styles.text}>Welcome, {name}!</Text> */}
@@ -91,12 +83,11 @@ const Chat = ({ route, navigation }) => {
       }}
     />
     { Platform.OS === 'android' ? <KeyboardAvoidingView behavior="height" /> : null }
-    {/* {Platform.OS === "ios"? <KeyboardAvoidingView behavior="height" />: null} */}
 </View>
         
     )
 };
-
+// styling for the chat component
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -106,7 +97,6 @@ const styles = StyleSheet.create({
     // text: {
     //     color: "#ffffff",
     //     fontSize: 30
-    //     // fontFamily: "Poppins-Regular",
     //   },
 
 });
