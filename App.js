@@ -1,21 +1,29 @@
-import { useState } from 'react';
-// import { StyleSheet } from 'react-native';
 // import the screens 
 import Start from './components/start';
 import Chat from './components/chat';
+import { useNetInfo }from '@react-native-community/netinfo';
+import { useEffect } from 'react';
+
 // import react Navigation
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore"
-
 
 // Create the navigator
 const Stack = createNativeStackNavigator();
 
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getFirestore, disableNetwork, enableNetwork } from "firebase/firestore"
+
+import { Alert, LogBox } from 'react-native';
+LogBox.ignoreLogs(["AsyncStorage has been extracted from"]);
+
+
+
 const App = () => {
-  const [text, setText] = useState("");
+
+  // network connectivity status
+  const connectionStatus = useNetInfo();
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -33,6 +41,17 @@ const app = initializeApp(firebaseConfig);
 // Initialize Cloud Firestore and get a reference to the service
 const db = getFirestore(app);
 
+// display an alert popup when connection is disable and enable
+useEffect(() => {
+  if (connectionStatus.isConnected === false){
+    Alert.alert("Connection lost!");
+    disableNetwork(db);
+  } else if (connectionStatus.isConnected === true){
+    enableNetwork(db);
+  }
+}, [connectionStatus.isConnected]);   // Whether to fetch data from AsyncStorage or to render the “add” form
+
+
   return (
     <NavigationContainer>
       <Stack.Navigator 
@@ -40,21 +59,14 @@ const db = getFirestore(app);
       >
         <Stack.Screen name="Start" component={Start} />
         <Stack.Screen name="Chat">
-        {props => <Chat db={db} {...props} />}
+        {props => <Chat isConnected={connectionStatus.isConnected} db={db} {...props} />}
         </Stack.Screen>
       </Stack.Navigator>
   </NavigationContainer>
     
   );
   }
-  // const styles = StyleSheet.create({
-  //   container: {
-  //     flex: 1,
-  //     justifyContent: "center",
-  //     alignItems: "center",
-  //   }
-  // });
-
+  
 export default App;
 
 
