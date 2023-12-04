@@ -1,10 +1,24 @@
 import {useState} from "react";
-import { TextInput, ImageBackground, TouchableOpacity, View, Text, StyleSheet } from "react-native";
+import { TextInput, ImageBackground, TouchableOpacity, View, Text, StyleSheet, Alert } from "react-native";
 import { Platform, KeyboardAvoidingView } from "react-native";
+import { getAuth, signInAnonymously } from "firebase/auth";
 
 const Start = ({ navigation })=>{
+    const auth = getAuth(); 
     const [name, setName] = useState("");
     const [background, setBackground] = useState("");
+
+    // allows user to sign in anonymously
+    const signInUser = () => {
+        signInAnonymously(auth)
+          .then(result => {
+            navigation.navigate("Chat", {name:name, background:background,userId: result.user.uid });
+            Alert.alert("Signed in Successfully!");
+          })
+          .catch((error) => {
+            Alert.alert("Unable to sign in, try later again.");
+          })
+      }
 
     return(
         // background image for chatty app
@@ -69,12 +83,14 @@ const Start = ({ navigation })=>{
             {/* button to go chat screen */}
             <TouchableOpacity 
                 style={styles.buttonStart}
-                onPress={() => navigation.navigate('Chat', {name: name, background: background})}
+                // onPress={() => navigation.navigate('Chat', {name: name, background: background})}
+                onPress={signInUser}
                 accessible={true}
                 accessibilityLabel="Get start chatting"
                 accessibilityHint="Navigates to the chat screen." 
-                accessibilityRole="button">
-                <Text style={styles.buttonText}>Start Chatting</Text>
+                accessibilityRole="button"
+                >
+                <Text style={styles.buttonText} >Start Chatting</Text>
             </TouchableOpacity>
         </View>
         {Platform.OS === 'ios' ? <KeyboardAvoidingView behavior = "padding" /> : null}
@@ -160,20 +176,7 @@ const styles = StyleSheet.create({
         padding: 20,
         alignItems: 'center',
         backgroundColor: "#757083",
-        // position: 'absolute',
-        // buttom: 5
-
-        // position: 'absolute',
-        // bottom: 5,
-        // marginBottom: "6%",
-        // fontSize: 16,
-        // fontWeight: '600',
-        // color: '#FFFFFF',
-        // backgroundColor: '#757083',
-        // padding: 20,
-        // width: '70%',
         borderRadius: 10,
-        // justifyContent: 'center'
     },
     buttonText: {
         fontSize: 18,

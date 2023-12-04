@@ -1,11 +1,14 @@
 import { useState } from 'react';
 // import { StyleSheet } from 'react-native';
-// import the screens
+// import the screens 
 import Start from './components/start';
 import Chat from './components/chat';
 // import react Navigation
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getFirestore } from "firebase/firestore"
 
 
 // Create the navigator
@@ -14,17 +17,31 @@ const Stack = createNativeStackNavigator();
 const App = () => {
   const [text, setText] = useState("");
 
-  const alertMyText = () => {
-    Alert.alert(text);
-  };
-  
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyDh4ATGmVex9BS5M5-SmCWlw7Pj0fUb1O8",
+  authDomain: "chattyapp-fac9e.firebaseapp.com",
+  projectId: "chattyapp-fac9e",
+  storageBucket: "chattyapp-fac9e.appspot.com",
+  messagingSenderId: "448282688366",
+  appId: "1:448282688366:web:f12b043d372f7c6f689f7f"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+
+// Initialize Cloud Firestore and get a reference to the service
+const db = getFirestore(app);
+
   return (
     <NavigationContainer>
       <Stack.Navigator 
       initialRouteName="Start"
       >
         <Stack.Screen name="Start" component={Start} />
-        <Stack.Screen name="Chat" component={Chat} />
+        <Stack.Screen name="Chat">
+        {props => <Chat db={db} {...props} />}
+        </Stack.Screen>
       </Stack.Navigator>
   </NavigationContainer>
     
@@ -97,6 +114,8 @@ export default App;
   // const alertMyText = () => {
   //   Alert.alert(text);
 // }
+
+
 //   return (
 
 /* <View style={styles.container} >

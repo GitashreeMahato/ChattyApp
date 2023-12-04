@@ -2,16 +2,19 @@ import { useState,useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import { GiftedChat, Bubble } from "react-native-gifted-chat";
 import { KeyboardAvoidingView, Platform } from "react-native";
+import { collection, addDoc, onSnapshot, query, orderBy } from "firebase/firestore";
  
 
-const Chat = ({ route, navigation }) => {
-    const {name} = route.params;
-    const {background} = route.params;
+const Chat = ({ route, navigation, db }) => {
+    const { name } = route.params;
+    const { background } = route.params;
+    const { userId } = route.params;
     const [messages, setMessages] = useState([]);
 
-    // when sending a message
+
+    // to save sent messages
     const onSend = (newMessages) => {
-        setMessages(previousMessages => GiftedChat.append(previousMessages, newMessages))
+      addDoc(collection(db, "messages"), newMessages[0])
       }
 
       // function to change the background of the message
@@ -29,45 +32,28 @@ const Chat = ({ route, navigation }) => {
                 backgroundColor: "#0000FF",
             },
             left: {
-                backgroundColor: "#414045",
-                left: -20
-                
+                backgroundColor: "#414045",                
             },
         }}
         />
         
       };
 
-      useEffect (()=>{
-        navigation.setOptions({
-            title: name,
+// fetch messages from db in real-time
+        useEffect(() =>{
+          navigation.setOptions({title: name,});
+          const q = query(collection(db, "messages"), orderBy("createdAt", "desc"));
+          const unsubMessages= onSnapshot(q, (documentsSnapshot) =>{
+            let newMessages = [];
+            documentsSnapshot.forEach(doc => {
+              newMessages.push({ id: doc.id, ...doc.data(), createdAt: new Date(doc.data().createdAt.toMillis())})
+          })
+          setMessages(newMessages)
         });
+         return()=>{
+          if(unsubMessages) unsubMessages();
+         }
         }, []);
-
-// set the static message which displays in the chat screen
-    useEffect(()=>{
-        setMessages([
-            {
-              _id: 1,
-              text: "Hello developer",
-              createdAt: new Date(),
-              user: {
-                _id: 2,
-                name: "React Native",
-                avatar: "https://placeimg.com/140/140/any",
-              },
-            },
-            // system message
-            {
-                _id: 2,
-                text: 'You joined the chat',
-                createdAt: new Date(),
-                system: true,
-              },
-          ]);
-        }, []);
-
-    
   
     // render main chat UI 
     return(
@@ -79,7 +65,8 @@ const Chat = ({ route, navigation }) => {
       renderBubble={renderBubble}
       onSend={messages => onSend(messages)}
       user={{
-        _id: 1
+        _id: userId,
+        name: name
       }}
     />
     { Platform.OS === 'android' ? <KeyboardAvoidingView behavior="height" /> : null }
@@ -102,3 +89,102 @@ const styles = StyleSheet.create({
 });
 
 export default Chat;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// 
+
+
+// set the static message which displays in the chat screen
+// useEffect(()=>{
+//   setMessages([
+//       {
+//         _id: 1,
+//         text: "Hello developer",
+//         createdAt: new Date(),
+//         user: {
+//           _id: 2,
+//           name: "React Native",
+//           avatar: "https://placeimg.com/140/140/any",
+//         },
+//       },
+//       // system message
+//       {
+//           _id: 2,
+//           text: 'You joined the chat',
+//           createdAt: new Date(),
+//           system: true,
+//         },
+//     ]);
+//   }, []);
+
+// when sending a message
+// const onSend = (newMessages) => {
+//   setMessages(previousMessages => GiftedChat.append(previousMessages, newMessages))
+// }
+
+ // useEffect (()=>{
+      //   navigation.setOptions({title: name,});
+      //   }, []);
