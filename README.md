@@ -30,6 +30,22 @@ This is a mobile chat app built with React Native. The app provides users with a
 
 ## Getting Started
 
+1. **Clone the Repository**:  
+
+git clone https://github.com/GitashreeMahato/ChattyApp.git
+
+2. **Step into the Directory**: 
+
+cd ChattyApp
+
+2. **Install All Required Packages**: 
+
+npm install
+
+3. **Install All Required Packages**: 
+
+expo start
+
 ## Usage
 
 
@@ -53,9 +69,20 @@ This is a mobile chat app built with React Native. The app provides users with a
       - Google Firebase authentication for anonymous sign in <br>
       - Firebase Cloud Storage for storing images.<br>
 - Gifted chat library
+- IOS Simulator
 
 ### Development Environment
 
+## Packages to install: 
+* npm install --save @react-navigation/native @react-navigation/native-stack
+* expo install react-native-screens react-native-safe-area-context
+* npm install react-native-gifted-chat --save
+* npm install firebase@9.13.0 --save
+* expo install @react-native-async-storage/async-storage
+* expo install @react-native-community/netinfo
+* expo install expo-image-picker
+* expo install expo-location
+* expo install react-native-maps
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
