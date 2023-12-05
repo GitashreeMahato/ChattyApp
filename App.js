@@ -18,7 +18,8 @@ import { getFirestore, disableNetwork, enableNetwork } from "firebase/firestore"
 import { Alert, LogBox } from 'react-native';
 LogBox.ignoreLogs(["AsyncStorage has been extracted from"]);
 
-
+// import storage for image
+import { getStorage } from 'firebase/storage';
 
 const App = () => {
 
@@ -40,6 +41,7 @@ const app = initializeApp(firebaseConfig);
 
 // Initialize Cloud Firestore and get a reference to the service
 const db = getFirestore(app);
+const storage = getStorage(app); // initialize the storage handler
 
 // display an alert popup when connection is disable and enable
 useEffect(() => {
@@ -55,11 +57,11 @@ useEffect(() => {
   return (
     <NavigationContainer>
       <Stack.Navigator 
-      initialRouteName="Start"
+      initialRouteName="Welcome"
       >
-        <Stack.Screen name="Start" component={Start} />
+        <Stack.Screen name="Welcome" component={Start} />
         <Stack.Screen name="Chat">
-        {props => <Chat isConnected={connectionStatus.isConnected} db={db} {...props} />}
+        {props => <Chat isConnected={connectionStatus.isConnected} db={db} storage={storage} {...props} />}
         </Stack.Screen>
       </Stack.Navigator>
   </NavigationContainer>

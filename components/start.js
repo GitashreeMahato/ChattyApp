@@ -1,11 +1,12 @@
-import {useState} from "react";
-import { TextInput, ImageBackground, TouchableOpacity, View, Text, StyleSheet, Alert } from "react-native";
-import { Platform, KeyboardAvoidingView } from "react-native";
+import { useState } from "react";
+import { TextInput, ImageBackground, TouchableOpacity, View, Text, StyleSheet, Alert, Platform, KeyboardAvoidingView  } from "react-native";
 import { getAuth, signInAnonymously } from "firebase/auth";
 
 const Start = ({ navigation })=>{
-    const auth = getAuth(); 
+    const auth = getAuth();
+    //creates state for name input so that content is updated dynamically 
     const [name, setName] = useState("");
+  //creates state for background selection so that background is populated dynamically
     const [background, setBackground] = useState("");
 
     // allows user to sign in anonymously

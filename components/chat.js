@@ -1,14 +1,17 @@
-import { useState,useEffect } from "react";
-import { StyleSheet, View } from "react-native";
+import { useState, useEffect } from "react";
+import { StyleSheet, View, KeyboardAvoidingView, Platform } from "react-native";
 import { GiftedChat, Bubble, InputToolbar } from "react-native-gifted-chat";
-import { KeyboardAvoidingView, Platform } from "react-native";
 import { collection, addDoc, onSnapshot, query, orderBy } from "firebase/firestore";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+
+import CustomActions from "./CustomActions";
+import MapView from "react-native-maps";
  
-const Chat = ({ route, navigation, db, isConnected }) => {
+const Chat = ({ route, navigation, db, isConnected, storage }) => {
     const { name } = route.params;
     const { background } = route.params;
     const { userId } = route.params;
+
     const [messages, setMessages] = useState([]);
 
     //to get messages from storage
@@ -59,6 +62,7 @@ const Chat = ({ route, navigation, db, isConnected }) => {
       };
 
       let unsubMessages;
+
         useEffect(() =>{
           navigation.setOptions({title: name,});
            // when there is connection fetch data from db otherwise fetch from AsyncStorage
@@ -68,15 +72,16 @@ const Chat = ({ route, navigation, db, isConnected }) => {
           if(unsubMessages) unsubMessages();
           unsubMessages = null;
 
-            // fetch messages from db in real-time
+        // Query Firestore for messages, ordered by their creation date.
             const q = query(collection(db, "messages"), orderBy("createdAt", "desc"));
+            // Listen for real-time changes in messages collection.
            unsubMessages= onSnapshot(q, (documentsSnapshot) =>{
             let newMessages = [];
             documentsSnapshot.forEach(doc => {
               newMessages.push({ id: doc.id, ...doc.data(), createdAt: new Date(doc.data().createdAt.toMillis())})
           })
-          cacheMessages(newMessages);
-          setMessages(newMessages);
+          cacheMessages(newMessages); // Cache the fetched messages
+          setMessages(newMessages); // Update state with new messages
         });
           }else loadCachedLists();
           
@@ -84,16 +89,44 @@ const Chat = ({ route, navigation, db, isConnected }) => {
           if(unsubMessages) unsubMessages();
          }
         }, [isConnected]);
-  
+
+        // creating action (circle) button 
+        const renderCustomActions = (props) =>{
+          return <CustomActions storage={storage} {...props} />
+        }
+// render mapView
+        const renderCustomView = (props) => {
+          const { currentMessage} = props;
+          if (currentMessage.location) {
+            return (
+                <MapView
+                  style={{width: 150,
+                    height: 100,
+                    borderRadius: 13,
+                    margin: 3}}
+                  region={{
+                    latitude: currentMessage.location.latitude,
+                    longitude: currentMessage.location.longitude,
+                    latitudeDelta: 0.0922,
+                    longitudeDelta: 0.0421,
+                  }}
+                />
+            );
+          }
+          return null;
+        }
+
     // render main chat UI 
     return(
         <View style={[styles.container, {backgroundColor: background}] }>
             {/* <Text style={styles.text}>Welcome, {name}!</Text> */}
 
             <GiftedChat
-              renderInputToolbar={renderInputToolbar}
               messages={messages}
               renderBubble={renderBubble}
+              renderInputToolbar={renderInputToolbar}
+              renderActions={renderCustomActions}
+              renderCustomView={renderCustomView}
               onSend={messages => onSend(messages)}
               user={{
                 _id: userId,
